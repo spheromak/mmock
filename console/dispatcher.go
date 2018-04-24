@@ -3,6 +3,7 @@ package console
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"strings"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/jmartin82/mmock/scenario"
 	"github.com/jmartin82/mmock/statistics"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"golang.org/x/net/websocket"
 )
 
@@ -55,6 +57,12 @@ func (di *Dispatcher) logFanOut() {
 //Start initiates the http console.
 func (di *Dispatcher) Start() {
 	e := echo.New()
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		//	AllowHeaders: []string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
+		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE, echo.OPTIONS},
+	}))
+
 	//WS
 	di.clients = []*websocket.Conn{}
 	e.GET("/echo", di.webSocketHandler)
@@ -70,6 +78,7 @@ func (di *Dispatcher) Start() {
 	e.GET("/api/request/reset", di.requestResetHandler)
 	e.POST("/api/request/verify", di.requestVerifyHandler)
 	e.GET("/api/request/all", di.requestAllHandler)
+	e.GET("/api/request/find", di.requestFindHandler)
 	e.GET("/api/request/matched", di.requestMatchedHandler)
 	e.GET("/api/request/unmatched", di.requestUnMatchedHandler)
 	e.GET("/api/scenarios/reset_all", di.scenariosResetHandler)
@@ -280,6 +289,41 @@ func (di *Dispatcher) scenariosUnpauseHandler(c echo.Context) error {
 func (di *Dispatcher) requestAllHandler(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, di.MatchSpy.GetAll())
+}
+
+func (di *Dispatcher) requestFindHandler(c echo.Context) error {
+	requests := di.MatchSpy.GetAll()
+	start, _ := strconv.ParseInt(c.QueryParam("start"), 10, 64)
+	end, _ := strconv.ParseInt(c.QueryParam("end"), 10, 64)
+	method := c.QueryParam("method")
+	status := c.QueryParam("statusCode")
+
+	if end < start {
+		ar := &ActionResponse{
+			Result: "invalid_time_range",
+		}
+		return c.JSON(http.StatusBadRequest, ar)
+	}
+
+	res := make([]definition.Match, 0)
+	for _, r := range requests {
+
+		if start != 0 && r.Time < start {
+			continue
+		}
+		if end != 0 && r.Time > end {
+			continue
+		}
+		if method != "" && r.Request.Method != method {
+			continue
+		}
+		if status != "" && strconv.Itoa(r.Response.StatusCode/100) != string(status[0]) {
+			continue
+		}
+
+		res = append(res, r)
+	}
+	return c.JSON(http.StatusOK, res)
 }
 
 func (di *Dispatcher) requestMatchedHandler(c echo.Context) error {

@@ -1,0 +1,40 @@
+{
+  "name": "mmock",
+  "description": "A Vue.js project",
+  "version": "1.0.0",
+  "author": "Jordi Martin <jordimartin@gmail.com>",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open --hot",
+    "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
+  },
+  "dependencies": {
+    "bootstrap": "^4.0.0-beta.2",
+    "bootstrap-vue": "^1.2.0",
+    "json-formatter-js": "^2.2.0",
+    "luxon": "^0.5.3",
+    "popper.js": "^1.12.9",
+    "vue": "^2.5.3",
+    "vue-datetime": "^1.0.0-beta.3",
+    "vue-json-editor-block-view": "^1.0.21",
+    "vue-native-websocket": "^2.0.5",
+    "vue-resource": "^1.4.0",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1",
+    "weekstart": "^1.0.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^6.0.0",
+    "babel-preset-env": "^1.6.1",
+    "cross-env": "^5.1.1",
+    "css-loader": "^0.28.10",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.5",
+    "style-loader": "^0.19.1",
+    "vue-loader": "^13.5.0",
+    "vue-template-compiler": "^2.5.3",
+    "webpack": "^3.8.1",
+    "webpack-dev-server": "^2.9.4"
+  }
+}

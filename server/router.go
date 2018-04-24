@@ -43,7 +43,7 @@ func (rr *Router) copy(src, dst *definition.Mock) {
 
 }
 
-//Route checks the request with all available mock definitions and return the matching mock for it.
+//Resolve route checks the request with all available mock definitions and return the matching mock for it.
 func (rr *Router) Resolve(req *definition.Request) (*definition.Mock, definition.MatchErrors) {
 	errors := make(definition.MatchErrors)
 	mocks := rr.Mapping.List()

@@ -60,7 +60,7 @@ func (di Dispatcher) callWebHook(url string, match *definition.Match) {
 		log.Printf("Impossible send payload to: %s\n", url)
 		return
 	}
-	log.Print("WebHook response: %s\n", resp.StatusCode)
+	log.Printf("WebHook response: %v\n", resp.StatusCode)
 }
 
 //ServerHTTP is the mock http server request handler.
